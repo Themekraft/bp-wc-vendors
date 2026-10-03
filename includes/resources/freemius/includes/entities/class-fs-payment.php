@@ -132,10 +132,11 @@
          */
         function formatted_gross()
         {
+            $price = $this->gross + $this->vat;
             return (
-                ( $this->gross < 0 ? '-' : '' ) .
+                ( $price < 0 ? '-' : '' ) .
                 $this->get_symbol() .
-                number_format( abs( $this->gross ), 2, '.', ',' ) . ' ' .
+                number_format( abs( $price ), 2, '.', ',' ) . ' ' .
                 strtoupper( $this->currency )
             );
         }
@@ -158,8 +159,8 @@
                 // Lazy load.
                 self::$CURRENCY_2_SYMBOL = array(
                     self::CURRENCY_USD => '$',
-                    self::CURRENCY_GBP => '£',
-                    self::CURRENCY_EUR => '€',
+                    self::CURRENCY_GBP => '&pound;',
+                    self::CURRENCY_EUR => '&euro;',
                 );
             }
 
