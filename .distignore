@@ -1,0 +1,14 @@
+# Files and folders that must not ship in the release zip (rsync exclude syntax).
+# VCS metadata, .github, node_modules and the old tk_script files are always excluded.
+/tests
+/docs
+/phpcs.xml
+/phpunit.xml*
+/codeception*.yml
+/docker-compose.yml
+/easy-coding-standard.yml
+/scoper.inc.php
+/package.json
+/package-lock.json
+/pnpm-lock.yaml
+/composer.json

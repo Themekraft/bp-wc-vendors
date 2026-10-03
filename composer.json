@@ -2,7 +2,11 @@
     "name": "themekraft/bp-wc-vendores",
     "description": "BuddyPress WooCommerce Vendors integrates WC Vendors with BuddyPress and enables a BuddyPress Social Marketplace",
     "keywords": [
-        "buddypress", "social networking", "woocommerce", "multi vendor", "marketplace"
+        "buddypress",
+        "social networking",
+        "woocommerce",
+        "multi vendor",
+        "marketplace"
     ],
     "homepage": "http://www.themekraft.com",
     "type": "wordpress-plugin",
@@ -20,11 +24,5 @@
     "minimum-stability": "stable",
     "require": {
         "php": ">=5.2"
-    },
-    "scripts":{
-        "package": "sh .tk/package.sh loader",
-        "wp-release": "sh .tk/wp_release.sh",
-        "beta-release": "sh .tk/full-deploy.sh loader 416 false beta",
-        "full-release": "sh .tk/full-deploy.sh loader 416 false released"
     }
 }

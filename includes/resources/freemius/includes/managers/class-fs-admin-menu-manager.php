@@ -430,41 +430,62 @@
 				$this->get_raw_slug();
 		}
 
-		/**
-		 * Is user on plugin's admin activation page.
-		 *
-		 * @author Vova Feldman (@svovaf)
-		 * @since  1.0.8
-		 *
-		 * @return bool
-		 */
-		function is_main_settings_page() {
-			if ( $this->_menu_exists &&
-			     ( fs_is_plugin_page( $this->_menu_slug ) || fs_is_plugin_page( $this->_module_unique_affix ) )
-			) {
-				/**
-				 * Module has a settings menu and the context page is the main settings page, so assume it's in
-				 * activation (doesn't really check if already opted-in/skipped or not).
-				 *
-				 * @since 1.2.2
-				 */
-				return true;
-			}
+        /**
+         * Is user on plugin's admin activation page.
+         *
+         * @author Vova Feldman (@svovaf)
+         * @since  1.0.8
+         *
+         * @param bool $show_opt_in_on_themes_page Since 2.3.1
+         *
+         * @return bool
+         *
+         * @deprecated Please use is_activation_page() instead.
+         */
+        function is_main_settings_page( $show_opt_in_on_themes_page = false ) {
+            return $this->is_activation_page( $show_opt_in_on_themes_page );
+        }
 
-			global $pagenow;
-			if ( ( WP_FS__MODULE_TYPE_THEME === $this->_module_type ) && Freemius::is_themes_page() ) {
-				/**
-				 * In activation only when show_optin query string param is given.
-				 *
-				 * @since 1.2.2
-				 */
-				return fs_request_get_bool( $this->_module_unique_affix . '_show_optin' );
-			}
+        /**
+         * Is user on product's admin activation page.
+         *
+         * @author Vova Feldman (@svovaf)
+         * @since  2.3.1
+         *
+         * @param bool $show_opt_in_on_themes_page Since 2.3.1
+         *
+         * @return bool
+         */
+        function is_activation_page( $show_opt_in_on_themes_page = false ) {
+            if ( $show_opt_in_on_themes_page ) {
+                /**
+                 * In activation only when show_optin query string param is given.
+                 *
+                 * @since 1.2.2
+                 */
+                return (
+                    ( WP_FS__MODULE_TYPE_THEME === $this->_module_type ) &&
+                    Freemius::is_themes_page() &&
+                    fs_request_get_bool( $this->_module_unique_affix . '_show_optin' )
+                );
+            }
 
-			return false;
-		}
+            if ( $this->_menu_exists &&
+                 ( fs_is_plugin_page( $this->_menu_slug ) || fs_is_plugin_page( $this->_module_unique_affix ) )
+            ) {
+                /**
+                 * Module has a settings menu and the context page is the main settings page, so assume it's in
+                 * activation (doesn't really check if already opted-in/skipped or not).
+                 *
+                 * @since 1.2.2
+                 */
+                return true;
+            }
 
-		#region Submenu Override
+            return false;
+        }
+
+        #region Submenu Override
 
 		/**
 		 * Override submenu's action.
@@ -678,11 +699,36 @@
 				$menu = $this->find_main_submenu();
 			}
 
+			$menu_slug   = $menu['menu'][2];
 			$parent_slug = isset( $menu['parent_slug'] ) ?
-                $menu['parent_slug'] :
-                'admin.php';
+				$menu['parent_slug'] :
+				'admin.php';
 
-			return admin_url( $parent_slug . '?page=' . $menu['menu'][2] );
+			if ( fs_apply_filter( $this->_module_unique_affix, 'enable_cpt_advanced_menu_logic', false ) ) {
+				$parent_slug = 'admin.php';
+
+				/**
+				 * This line and the `if` block below it are based on the `menu_page_url()` function of WordPress.
+				 *
+				 * @author Leo Fajardo (@leorw)
+				 * @since 2.10.2
+				 */
+				global $_parent_pages;
+
+				if ( ! empty( $_parent_pages[ $menu_slug ] ) ) {
+					$_parent_slug = $_parent_pages[ $menu_slug ];
+					$parent_slug  = isset( $_parent_pages[ $_parent_slug ] ) ?
+						$parent_slug :
+						$menu['parent_slug'];
+				}
+			}
+
+			return admin_url(
+				$parent_slug .
+				( false === strpos( $parent_slug, '?' ) ? '?' : '&' ) .
+				'page=' .
+				$menu_slug
+			);
 		}
 
 		/**

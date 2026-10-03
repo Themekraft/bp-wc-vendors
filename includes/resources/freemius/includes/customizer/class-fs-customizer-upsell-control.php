@@ -58,8 +58,12 @@
 				$this->fs->get_trial_url() :
 				$this->fs->get_upgrade_url();
 
+			$api = FS_Plugin::is_valid_id( $this->fs->get_bundle_id() ) ?
+				$this->fs->get_api_bundle_scope() :
+				$this->fs->get_api_plugin_scope();
+
 			// Load features.
-			$pricing = $this->fs->get_api_plugin_scope()->get( $this->fs->add_show_pending( "pricing.json" ) );
+			$pricing = $api->get( $this->fs->add_show_pending( "pricing.json" ) );
 
 			if ( $this->fs->is_api_result_object( $pricing, 'plans' ) ) {
 				// Add support features.
@@ -69,7 +73,6 @@
 						'forum'              => 'Support Forum',
 						'email'              => 'Priority Email Support',
 						'phone'              => 'Phone Support',
-						'skype'              => 'Skype Support',
 						'is_success_manager' => 'Personal Success Manager',
 					);
 
@@ -97,10 +100,10 @@
 							}
 						}
 					}
+
+                    $this->json['plans'] = $pricing->plans;
 				}
 			}
-
-			$this->json['plans'] = $pricing->plans;
 
 			$this->json['strings'] = array(
 				'plan' => $this->fs->get_text_x_inline( 'Plan', 'as product pricing plan', 'plan' ),

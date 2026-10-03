@@ -31,13 +31,6 @@
 		 */
 		public $is_verified;
 		/**
-         * @author Leo Fajardo (@leorw)
-         * @since 2.3.0
-         *
-		 * @var bool
-		 */
-		public $is_beta;
-		/**
 		 * @var string|null
 		 */
 		public $customer_id;
@@ -55,6 +48,19 @@
 			parent::__construct( $user );
 		}
 
+		/**
+		 * This method removes the deprecated 'is_beta' property from the serialized data.
+		 * Should clean up the serialized data to avoid PHP 8.2 warning on next execution.
+		 *
+		 * @return void
+		 */
+		function __wakeup() {
+			if ( property_exists( $this, 'is_beta' ) ) {
+				// If we enter here, and we are running PHP 8.2, we already had the warning. But we sanitize data for next execution.
+				unset( $this->is_beta );
+			}
+		}
+
 		function get_name() {
 			return trim( ucfirst( trim( is_string( $this->first ) ? $this->first : '' ) ) . ' ' . ucfirst( trim( is_string( $this->last ) ? $this->last : '' ) ) );
 		}
@@ -65,15 +71,16 @@
 
         /**
          * @author Leo Fajardo (@leorw)
-         * @since 2.3.0
+         * @since 2.4.2
          *
          * @return bool
          */
-		function is_beta() {
-			return ( isset( $this->is_beta ) && true === $this->is_beta );
-		}
+        function is_beta() {
+            // Return `false` since this is just for backward compatibility.
+            return false;
+        }
 
-		static function get_type() {
+        static function get_type() {
 			return 'user';
 		}
 	}
