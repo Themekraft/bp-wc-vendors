@@ -8,6 +8,7 @@
  * Author URI: http://themekraft.com/
  * License: GPLv3 or later
  * Network: false
+ * WC tested up to: 11.1
  * Svn: bp-wc-vendors
  *
  *****************************************************************************
@@ -29,6 +30,14 @@
  ****************************************************************************
  */
 
+add_action(
+	'before_woocommerce_init',
+	function () {
+		if ( class_exists( \Automattic\WooCommerce\Utilities\FeaturesUtil::class ) ) {
+			\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', __FILE__, true );
+		}
+	}
+);
 
 class BP_WC_Vendors {
 
