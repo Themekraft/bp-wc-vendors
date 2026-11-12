@@ -4,6 +4,7 @@
  *Plugin URI: https://themekraft.com/products/bp-wc-vendors/
  * Description: Integrates the WC Vendors Pro Plugin With BuddyPress
  * Version: 1.1.8
+ * Requires Plugins: woocommerce, wc-vendors
  * Author: ThemeKraft
  * Author URI: http://themekraft.com/
  * License: GPLv3 or later
@@ -180,7 +181,66 @@ class BP_WC_Vendors {
 
 }
 
-$GLOBALS['bp_wcv'] = new BP_WC_Vendors();
+/**
+ * Names of the plugins BP WC Vendors needs that are not loaded.
+ *
+ * BuddyPress is checked here instead of in "Requires Plugins" because BuddyBoss
+ * Platform replaces it under another folder name.
+ *
+ * @return string[]
+ */
+function bp_wcv_missing_dependencies() {
+	$missing = array();
+
+	if ( ! function_exists( 'buddypress' ) ) {
+		$missing[] = 'BuddyPress';
+	}
+	if ( ! class_exists( 'WooCommerce' ) ) {
+		$missing[] = 'WooCommerce';
+	}
+	if ( ! class_exists( 'WC_Vendors' ) ) {
+		$missing[] = 'WC Vendors';
+	}
+
+	return $missing;
+}
+
+/**
+ * Admin notice shown while a required plugin is missing.
+ */
+function bp_wcv_missing_dependencies_notice() {
+	if ( ! current_user_can( 'activate_plugins' ) ) {
+		return;
+	}
+
+	printf(
+		'<div class="notice notice-error"><p>%s</p></div>',
+		esc_html(
+			sprintf(
+				/* translators: %s: comma-separated list of plugin names. */
+				__( 'BP WC Vendors is not running because these plugins are not active: %s.', 'bpwcv' ),
+				implode( ', ', bp_wcv_missing_dependencies() )
+			)
+		)
+	);
+}
+
+/**
+ * Start the plugin once every active plugin is loaded, and only when its
+ * dependencies are there. Runs before BuddyPress sets up its components
+ * (bp_loaded fires on plugins_loaded at priority 10).
+ */
+function bp_wcv_bootstrap() {
+	if ( bp_wcv_missing_dependencies() ) {
+		add_action( 'admin_notices', 'bp_wcv_missing_dependencies_notice' );
+
+		return;
+	}
+
+	$GLOBALS['bp_wcv'] = new BP_WC_Vendors();
+}
+
+add_action( 'plugins_loaded', 'bp_wcv_bootstrap', 5 );
 
 
 //
@@ -210,7 +270,7 @@ add_action( 'init', function () {
 			$plugins['buddyforms'] = array(
 				'name'      => 'BuddyForms',
 				'slug'      => 'buddyforms',
-				'required'  => true,
+				'required'  => false,
 			);
 		}
 
