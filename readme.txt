@@ -3,7 +3,7 @@ Contributors: svenl77, themekraft, buddyforms, gfirem
 Tags: multi vendor, marketplace, buddypress, woocommerce, vendor stores, vendors, wc-vendors, wc vendors, wc4bp , buddyforms, marketplace, user, members, profiles, custom post types, taxonomy, frontend posting, frontend editing, revision, review, moderation, frontend editor
 Requires at least: WordPress 3.9
 Tested up to: 7.1
-Stable tag: 1.1.8
+Stable tag: 1.1.9
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -144,6 +144,10 @@ We believe that WC Vendors is the best vendor solution on the market and want to
 2. BuddyPress Members View
 
 == Changelog ==
+= 1.1.9 - 18 Nov 2026 =
+* Fixed a fatal error on every front-end page when BuddyPress is inactive, and on member profiles when WooCommerce or WC Vendors is inactive. The plugin now shows a notice naming the missing plugins instead.
+* WooCommerce and WC Vendors are now declared as required plugins. BuddyForms is no longer marked as required.
+
 = 1.1.8 - 05 Oct 2026 =
 * Compatible with WooCommerce High-Performance Order Storage (HPOS).
 * Tested up to WordPress 7.1 and WooCommerce 11.1.
