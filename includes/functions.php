@@ -1,5 +1,21 @@
 <?php
 
+/**
+ * Get the WC Vendors (free) vendor dashboard page ID.
+ *
+ * WC Vendors 2.0 removed WC_Vendors::$pv_options and stores the page in the
+ * wcvendors_vendor_dashboard_page_id option; older versions still use $pv_options.
+ *
+ * @return int|string|false
+ */
+function bp_wcv_get_free_dashboard_page_id() {
+	if ( isset( WC_Vendors::$pv_options ) && is_object( WC_Vendors::$pv_options ) ) {
+		return WC_Vendors::$pv_options->get_option( 'vendor_dashboard_page' );
+	}
+
+	return get_option( 'wcvendors_vendor_dashboard_page_id' );
+}
+
 add_filter( 'buddyforms_front_js_css_loader', 'bp_wcv_front_js_css_loader', 10, 1 );
 function bp_wcv_front_js_css_loader( $fount ) {
 	return true;
@@ -12,11 +28,12 @@ function bp_wcv_dashboard_quick_links( $quick_links ) {
 
 	$quick_links_new = Array();
 
-	if ( ! isset( $bp_wcv_options['tab_products_disabled'] ) ) {
+	// WC Vendors (free) has no coupon quick link; only WC Vendors Pro adds it.
+	if ( ! isset( $bp_wcv_options['tab_products_disabled'] ) && isset( $quick_links['product'] ) ) {
 		$quick_links_new['product'] = $quick_links['product'];
 	}
 
-	if ( ! isset( $bp_wcv_options['tab_coupons_disabled'] ) ) {
+	if ( ! isset( $bp_wcv_options['tab_coupons_disabled'] ) && isset( $quick_links['shop_coupon'] ) ) {
 		$quick_links_new['shop_coupon'] = $quick_links['shop_coupon'];
 	}
 
@@ -36,7 +53,7 @@ function bp_wcv_bf_members_get_redirect_link( $link ){
 		if( class_exists('WCVendors_Pro') ){
 			$dashboard_page_id = WCVendors_Pro::get_option( 'dashboard_page_id' );
 		} else{
-			$dashboard_page_id = WC_Vendors::$pv_options->get_option( 'vendor_dashboard_page' );
+			$dashboard_page_id = bp_wcv_get_free_dashboard_page_id();
 		}
 
 		$link = get_permalink($dashboard_page_id);
@@ -55,7 +72,7 @@ function bp_wcv_get_redirect_link( $post_ID ) {
 	if( class_exists('WCVendors_Pro') ){
 		$dashboard_page_id = WCVendors_Pro::get_option( 'dashboard_page_id' );
 	} else{
-		$dashboard_page_id = WC_Vendors::$pv_options->get_option( 'vendor_dashboard_page' );
+		$dashboard_page_id = bp_wcv_get_free_dashboard_page_id();
 	}
 
 

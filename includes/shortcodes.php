@@ -32,7 +32,7 @@ function bp_wcv_bav_if_logged_in_or_reg_process_shortcode() {
 			  if( class_exists('WCVendors_Pro') ){
 				  $dashboard_page_id = WCVendors_Pro::get_option( 'dashboard_page_id' );
 			  } else{
-				  $dashboard_page_id = WC_Vendors::$pv_options->get_option( 'vendor_dashboard_page' );
+				  $dashboard_page_id = bp_wcv_get_free_dashboard_page_id();
 			  }
 
 			  wp_redirect( get_permalink($dashboard_page_id) );
