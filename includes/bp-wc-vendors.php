@@ -42,7 +42,7 @@ function bp_wcv_after_vendor_store_title() {
 	$vendor_shop = urldecode( get_query_var( 'vendor_shop' ) );
 	$wcv_profile_id   = WCV_Vendors::get_vendor_id( $vendor_shop );
 
-	$profile_url    = bp_core_get_user_domain( $wcv_profile_id );
+	$profile_url    = bp_wcv_get_user_domain( $wcv_profile_id );
 	echo '<a href="' . $profile_url . '" class="button">' . __( 'View Profile', 'bpwcv' ) . '</a>';
 
 }
@@ -56,7 +56,7 @@ function bp_wcv_link_woocommerce_product_meta_start() {
 	}
 
 	$wcv_profile_id = get_the_author_meta( 'ID' );
-	$profile_url    = bp_core_get_user_domain( $wcv_profile_id );
+	$profile_url    = bp_wcv_get_user_domain( $wcv_profile_id );
 	echo __('Vendor Profile:', 'bpwcv') .  '<a href="' . $profile_url . '">' . __( 'View My Profile', 'bpwcv' ) . '</a>';
 }
 
@@ -110,3 +110,22 @@ function bp_wcv_buddyforms_the_loop_actions( $post_id ) {
 
 }
 
+/**
+ * Get the BuddyPress profile URL of a user.
+ *
+ * Uses bp_members_get_user_url() on BuddyPress 12+, where bp_core_get_user_domain() is deprecated.
+ *
+ * @param int $user_id The user ID.
+ *
+ * @return string
+ */
+function bp_wcv_get_user_domain( $user_id ) {
+	if ( empty( $user_id ) ) {
+		return '';
+	}
+	if ( function_exists( 'bp_members_get_user_url' ) ) {
+		return bp_members_get_user_url( $user_id );
+	}
+
+	return bp_core_get_user_domain( $user_id );
+}
