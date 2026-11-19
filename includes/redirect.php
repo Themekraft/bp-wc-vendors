@@ -22,9 +22,9 @@ function bp_wcv_store_redirect_to_profile() {
 		$pro_dashboard = false;
 		if ( class_exists( 'WCVendors_Pro' ) ) {
 			$dashboard_page_id = $pro_dashboard = WCVendors_Pro::get_option( 'dashboard_page_id' );
-			$free_dashboard = WC_Vendors::$pv_options->get_option( 'vendor_dashboard_page' );
+			$free_dashboard = bp_wcv_get_free_dashboard_page_id();
 		} else {
-			$dashboard_page_id = $free_dashboard = WC_Vendors::$pv_options->get_option( 'vendor_dashboard_page' );
+			$dashboard_page_id = $free_dashboard = bp_wcv_get_free_dashboard_page_id();
 		}
 
 			if( ! WCV_Vendors::is_vendor_page()){
