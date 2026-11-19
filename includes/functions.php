@@ -28,11 +28,12 @@ function bp_wcv_dashboard_quick_links( $quick_links ) {
 
 	$quick_links_new = Array();
 
-	if ( ! isset( $bp_wcv_options['tab_products_disabled'] ) ) {
+	// WC Vendors (free) has no coupon quick link; only WC Vendors Pro adds it.
+	if ( ! isset( $bp_wcv_options['tab_products_disabled'] ) && isset( $quick_links['product'] ) ) {
 		$quick_links_new['product'] = $quick_links['product'];
 	}
 
-	if ( ! isset( $bp_wcv_options['tab_coupons_disabled'] ) ) {
+	if ( ! isset( $bp_wcv_options['tab_coupons_disabled'] ) && isset( $quick_links['shop_coupon'] ) ) {
 		$quick_links_new['shop_coupon'] = $quick_links['shop_coupon'];
 	}
 
